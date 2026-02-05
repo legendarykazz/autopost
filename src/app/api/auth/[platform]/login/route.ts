@@ -3,9 +3,9 @@ import { Platform } from '@/lib/types';
 
 export async function GET(
     request: Request,
-    { params }: { params: { platform: string } }
+    { params }: { params: Promise<{ platform: string }> }
 ) {
-    const platform = params.platform as Platform;
+    const { platform } = await params;
 
     // Real App: Redirect to actual OAuth providers
     // For MVP Phase 2: We will simulate the redirect for now, 
