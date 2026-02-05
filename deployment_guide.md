@@ -28,7 +28,10 @@ The current app saves uploads to `public/uploads`. On Vercel, these files will d
 1.  Push your code to a **GitHub Repository**.
 2.  Go to [Vercel](https://vercel.com) -> **Add New Project**.
 3.  Import your repository.
-4.  **Environment Variables**:
+4.  **Project Settings (Important)**:
+    *   Find the **Root Directory** setting (under General).
+    *   Click "Edit" and select `web-app`.
+5.  **Environment Variables**:
     *   Add `DATABASE_URL` (Your Neon connection string).
     *   Add your Social API Keys (`LINKEDIN_CLIENT_ID`, etc).
 5.  Click **Deploy**.
