@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { Platform } from '@/lib/types';
 
 export async function GET(
-    request: Request,
+    request: NextRequest,
     { params }: { params: Promise<{ platform: string }> }
 ) {
     const { platform } = await params;

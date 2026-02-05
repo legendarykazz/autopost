@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import prisma from '@/lib/db';
 
 export async function GET(
-    request: Request,
+    request: NextRequest,
     { params }: { params: Promise<{ platform: string }> }
 ) {
     const { platform } = await params;
