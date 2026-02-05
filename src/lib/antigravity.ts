@@ -94,7 +94,7 @@ export const AntigravityEngine = {
                 const results = await AntigravityEngine.dispatch(
                     post.content,
                     platforms,
-                    post.mediaType,
+                    post.mediaType as 'TEXT' | 'IMAGE' | 'VIDEO',
                     post.mediaUrl || undefined
                 );
 
