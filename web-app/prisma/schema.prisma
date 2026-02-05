@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  accounts  SocialAccount[]
+  posts     Post[]
+}
+
+model SocialAccount {
+  id           String   @id @default(cuid())
+  userId       String
+  platform     String   // facebook, instagram, linkedin, twitter
+  platformUser String?  // username on the platform
+  accessToken  String
+  refreshToken String?
+  expiresAt    DateTime?
+  authData     String?  // JSON string for full auth response
+  connected    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id            String    @id @default(cuid())
+  userId        String
+  content       String
+  
+  // Media Support
+  mediaType     String    @default("TEXT") // TEXT, IMAGE, VIDEO
+  mediaUrl      String?   // URL to image or video file
+  
+  platforms     String    // JSON string or comma-separated list of platforms
+  status        String    // DRAFT, QUEUED, SCHEDULED, PUBLISHED, FAILED
+  
+  // Scheduling & Queue
+  scheduledDate DateTime?
+  queuePosition Int?      // 1, 2, 3... for weekly queue
+  
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  engagement    Engagement[]
+}
+
+model Engagement {
+  id        String   @id @default(cuid())
+  postId    String
+  platform  String
+  likes     Int      @default(0)
+  comments  Int      @default(0)
+  shares    Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
