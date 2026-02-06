@@ -33,7 +33,34 @@ export async function GET(
             refreshToken = `mock_refresh_token`;
             authData = JSON.stringify({ scope: 'mock_scope', expires_in: 3600 });
         } else {
-            // Real exchange logic would go here
+            // Real Token Exchange
+            const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/${platform}/callback`;
+
+            if (platform === 'linkedin') {
+                const params = new URLSearchParams();
+                params.append('grant_type', 'authorization_code');
+                params.append('code', code);
+                params.append('redirect_uri', redirectUri);
+                params.append('client_id', process.env.LINKEDIN_CLIENT_ID!);
+                params.append('client_secret', process.env.LINKEDIN_CLIENT_SECRET!);
+
+                const tokenRes = await fetch('https://www.linkedin.com/oauth/v2/accessToken', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: params
+                });
+
+                if (!tokenRes.ok) {
+                    const errorText = await tokenRes.text();
+                    console.error('LinkedIn Token Error:', errorText);
+                    throw new Error(`LinkedIn Token Exchange Failed: ${tokenRes.statusText}`);
+                }
+
+                const data = await tokenRes.json();
+                accessToken = data.access_token;
+                refreshToken = data.refresh_token || ''; // LinkedIn v2 might not return refresh token for standard scopes immediately/always
+                authData = JSON.stringify({ scope: data.scope, expires_in: data.expires_in });
+            }
         }
 
         // 3. Find existing connection or create new FOR THIS USER
