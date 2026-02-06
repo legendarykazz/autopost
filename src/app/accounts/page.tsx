@@ -16,27 +16,34 @@ export default function AccountsPage() {
     const fetchAccounts = async () => {
         try {
             const res = await fetch('/api/accounts');
-            // Note: We need to ensure this endpoint exists. 
-            // If not, we will default to the mock list but check 'connected' status from detailed fetch if available.
-            // For MVP, likely we rely on the `api/social-accounts` if we built it, 
-            // OR we can rebuild the mock state based on a check.
+            let connectedAccounts: any[] = [];
 
-            // Let's assume we fetch a list of "Available Platforms" and merge with DB status.
-            // Since we haven't built a robust 'GET /api/accounts' that merges config yet, 
-            // let's stick to the static list BUT update the 'connected' bool by hitting a check endpoint.
+            if (res.ok) {
+                connectedAccounts = await res.json();
+            }
 
-            // Fallback for this step: Keep state static but allow "handleConnect" to work.
-            // The user asked for "avenue for people to connect", which is the button.
-            // The BUTTON redirect is already fixed in previous steps to go to /api/auth/...
-
-            setAccounts([
+            const platforms = [
                 { id: 'linkedin', name: 'LinkedIn', connected: false, username: '', color: 'bg-blue-600' },
                 { id: 'twitter', name: 'X (Twitter)', connected: false, username: '', color: 'bg-black' },
                 { id: 'facebook', name: 'Facebook', connected: false, username: '', color: 'bg-blue-500' },
                 { id: 'instagram', name: 'Instagram', connected: false, username: '', color: 'bg-pink-600' },
-            ]);
+            ];
 
-            // In a Polished app: fetch('/api/user/connections') -> setAccounts(merged);
+            const merged = platforms.map(p => {
+                const match = connectedAccounts.find((acc: any) => acc.platform === p.id);
+                if (match) {
+                    return {
+                        ...p,
+                        connected: true,
+                        username: match.platformUser || 'Connected'
+                    };
+                }
+                return p;
+            });
+
+            setAccounts(merged);
+        } catch (error) {
+            console.error('Failed to fetch accounts', error);
         } finally {
             setLoading(false);
         }
