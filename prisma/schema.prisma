@@ -4,8 +4,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  url = env("MANUAL_DB_URL") // Custom variable to bypass Vercel conflicts
+  directUrl = env("MANUAL_DB_URL") // Use same for now or non-pooling if available
 }
 
 model User {
