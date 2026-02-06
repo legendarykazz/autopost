@@ -15,7 +15,7 @@ export default function AccountsPage() {
 
     const fetchAccounts = async () => {
         try {
-            const res = await fetch('/api/accounts');
+            const res = await fetch('/api/accounts', { cache: 'no-store' });
             let connectedAccounts: any[] = [];
 
             if (res.ok) {
@@ -145,6 +145,11 @@ export default function AccountsPage() {
                     Since this is a local MVP, "Connecting" above simulates a successful API handshake.
                     To post for real, we will need to input actual App IDs and Secrets in a `.env` file or a secure settings modal.
                 </p>
+            </div>
+            <div className="bg-zinc-900/50 p-4 rounded border border-yellow-500/20 text-xs font-mono text-yellow-500">
+                <p className="font-bold mb-2">DEBUG MODE (Temporary)</p>
+                <p>Length: {accounts.length}</p>
+                <pre>{JSON.stringify(accounts, null, 2)}</pre>
             </div>
         </div>
     );
